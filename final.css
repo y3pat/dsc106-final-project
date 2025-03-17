@@ -38,41 +38,41 @@ header {
   overflow-y: auto !important; /* Enables proper scrolling */
   height: 100vh; /* Limits column to viewport height */
   max-height: 100vh; /* Prevents extra height */
-  box-sizing: border-box; /* Ensures padding is counted within height */
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.03); /* Light overlay for separation */
 }
 
 /* Step sections */
 .step {
   opacity: 0.2;
   filter: blur(2px);
-  transition: opacity 0.6s ease, filter 0.6s ease;
-  padding: 75px;  /* Enough breathing room without affecting detection */
-  margin-top: 700px;  /* Ensures space between steps */
-  margin-bottom: 450px; /* Even spacing between steps */
+  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+  padding: 75px;  
+  margin-top: 250px;  
+  margin-bottom: 450px;
+  transform: translateY(20px);
 }
 
-
-
-
-
-/* Last step (Final Test) */
-.step:last-child {
-  margin-bottom: 750px; /* Large gap at the end to allow full scrolling */
+/* Smooth transition when active */
+.step.is-active {
+  opacity: 1;
+  filter: none;
+  transform: translateY(0);
+  font-weight: bold;
+  color: #A6055D; /* Highlight active step with stress-related color */
+  border-left: 4px solid #A6055D; /* Subtle indicator */
+  padding-left: 20px;
 }
-
-/* Make steps visible when active */
-.step.is-active { opacity: 1; filter: none; }
-
 
 /* Right column: sticky container */
 .right-column {
   width: 60%;
   position: sticky;
   top: 0;
-  height: 100vh; /* Ensures it takes full height */
+  height: 100vh;
   display: flex;
-  align-items: center; /* Centers the graph vertically */
-  justify-content: center; /* Centers the graph horizontally */
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
 }
 
@@ -80,35 +80,31 @@ header {
 .graph-container {
   width: 750px;
   height: 550px;
-  background: transparent; /* ✅ Removes the black box */
-  border: none; /* ✅ Removes the border if unwanted */
-  border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ✅ Soft shadow for a modern look */
+  background: rgba(255, 255, 255, 0.95); /* Lightened for contrast */
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Softer, modern shadow */
   position: relative;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
 }
 
-/* Optionally style any SVG inside the graph container */
-/* Make sure the SVG inside the graph is visible */
+/* Ensure the SVG inside the graph is clean */
 .graph-container svg {
-  background: none; /* ✅ Ensures no unwanted background */
-  border: none; /* ✅ Removes any borders */
-  border-radius: 4px;
+  background: none;
+  border: none;
 }
 
-/* Tooltip styling (if used) */
+/* Tooltip styling */
 .tooltip {
   position: absolute;
-  bottom: -35px;
-  right: 20px;
-  width: 300px;
-  text-align: right;
-  font-size: 0.8em;
-  font-weight: 700;
-  color: #01080D;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease;
 }
