@@ -1,0 +1,82 @@
+/* Basic resets and typography */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  background-color: #F2E8DC;
+  color: #01080D;
+}
+header {
+  text-align: center;
+  padding: 20px;
+  background: #e0e0e0;
+}
+
+/* Two-column container */
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Left column: scrollable steps */
+.left-column {
+  width: 40%;
+  padding: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 40px); /* Adjust if header height changes */
+}
+.step {
+  background: #fff;
+  margin-bottom: 40px;
+  padding: 20px;
+  border-radius: 6px;
+  opacity: 0; /* Start hidden */
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.step.is-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Right column: fixed/ sticky graph container */
+.right-column {
+  width: 60%;
+  position: sticky;
+  top: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.graph-container {
+  width: 750px;
+  height: 550px;
+  margin: 0 auto;
+  background: #01080D;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  position: relative;
+  padding: 20px;
+}
+
+/* Optionally style any SVG inside the graph container */
+.graph-container svg {
+  display: block;
+  margin: 0 auto 40px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Tooltip styling (if used) */
+.tooltip {
+  position: absolute;
+  bottom: -35px;
+  right: 20px;
+  width: 300px;
+  text-align: right;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: #01080D;
+}
