@@ -3,21 +3,24 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Roboto", sans-serif;
-  background-color: #F5F1EB; /* Light Beige for better readability */
-  color: #111111; /* Dark text for high contrast */
+  background-color: #FFF;
+  color: #01080D;
+  text-align: left;
 }
 
-html, body {
+/* html, body {
   overflow: hidden; 
   height: 100vh;
-}
+  text-align: left;
+} */
 
 header {
   text-align: center;
   padding: 20px;
-  background: #e1e1e1;
-  font-size: 1.5rem;
-  font-weight: bold;
+  background: #FFF;
+  text-align: left;
+  margin-left: 60px;
+  margin-right: 60px;
 }
 
 /* Two-column container */
@@ -43,11 +46,12 @@ header {
 .step {
   opacity: 0.2;
   filter: blur(2px);
-  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
-  padding: 75px;  
-  margin-top: 250px;  
+  transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out;
+  padding: 75px;
+  margin-top: 250px;
   margin-bottom: 450px;
   transform: translateY(20px);
+  border-left: 4px solid transparent; /* Initially invisible border */
 }
 
 /* Smooth transition when active */
@@ -56,10 +60,13 @@ header {
   filter: none;
   transform: translateY(0);
   font-weight: bold;
-  color: #A6055D; /* Highlight active step with stress-related color */
-  border-left: 4px solid #A6055D; /* Subtle indicator */
+  color: #A6055D; /* Stress-related color */
   padding-left: 20px;
+  border-left: 4px solid #A6055D;
+  transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out,
+              color 0.6s ease-in-out, border-color 0.6s ease-in-out;
 }
+
 
 /* Right column: sticky container */
 .right-column {
@@ -104,4 +111,24 @@ header {
   font-size: 0.9rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: opacity 0.3s ease;
+}
+
+/* Introduction & Conclusion Styling */
+.intro-step, .conclusion-step {
+  text-align: center;
+  padding: 100px 20px;
+  font-size: 1.5rem;
+  background: rgba(0, 0, 0, 0.05); /* Light background */
+  border-radius: 10px;
+  margin-bottom: 200px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Make them more engaging when active */
+.intro-step.is-active, .conclusion-step.is-active {
+  color: #A6055D;
+  font-weight: bold;
+  border-left: 6px solid #A6055D;
+  padding-left: 25px;
 }

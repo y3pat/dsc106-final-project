@@ -1,5 +1,6 @@
 const scroller = scrollama();
 const leftColumn = document.querySelector(".left-column"); // Scrollable section
+const graphContainer = document.querySelector("#graph-container"); // Graph container
 
 function handleStepEnter(response) {
   console.log("Entering step:", response.element.getAttribute("data-test")); // Debugging log
@@ -11,6 +12,16 @@ function handleStepEnter(response) {
 
   // Get the test name from data-test
   const testName = response.element.getAttribute("data-test");
+
+  // If the introduction or conclusion is active, hide the graph
+  if (testName === "introduction" || testName === "conclusion") {
+    console.log(`Skipping graph update for: ${testName}`);
+    graphContainer.style.display = "none"; // Hide the graph container
+    return;
+  }
+
+  // Show graph container when a test section is active
+  graphContainer.style.display = "flex";
 
   // Ensure data is available before updating graphs
   if (window.allEdaData && window.allHrData) {
@@ -57,13 +68,13 @@ function waitForDataAndStart() {
 
 // Initialize Scrollama AFTER everything is loaded
 function initScrollama() {
-  scroller.setup({
-    step: ".step",
-    offset: 0.58, // Middle of the screen remains the trigger zone
-    debug: false
-  })
-  .onStepEnter(handleStepEnter);
-
+  scroller
+    .setup({
+      step: ".step",
+      offset: 0.58, // Middle of the screen remains the trigger zone
+      debug: false
+    })
+    .onStepEnter(handleStepEnter);
 }
 
 // ✅ Start waiting for data, then initialize everything
