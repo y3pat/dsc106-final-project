@@ -59,8 +59,8 @@ function waitForDataAndStart() {
 function initScrollama() {
   scroller.setup({
     step: ".step",
-    offset: 0.33, // Middle of the screen remains the trigger zone
-    debug: false
+    offset: 0.58, // Middle of the screen remains the trigger zone
+    debug: true
   })
   .onStepEnter(handleStepEnter);
 

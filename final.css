@@ -37,52 +37,62 @@ header {
 }
 
 /* Step sections */
-.step { opacity: 0.2; filter: blur(2px); transition: opacity 0.6s ease, filter 0.6s ease; margin-bottom: 300px; /* Increase spacing between steps */
-  padding: 20px; /* Ensures content has breathing room */}
-
-
-/* First step (Baseline) */
-.step:first-child {
-  margin-top: 250px; /* Ensures it starts at the top */
-  padding-top: 50px; /* Adds slight padding for readability */
+.step {
+  opacity: 0.2;
+  filter: blur(2px);
+  transition: opacity 0.6s ease, filter 0.6s ease;
+  padding: 75px;  /* Enough breathing room without affecting detection */
+  margin-top: 700px;  /* Ensures space between steps */
+  margin-bottom: 450px; /* Even spacing between steps */
 }
+
+
+
+
 
 /* Last step (Final Test) */
 .step:last-child {
-  margin-bottom: 500px; /* Large gap at the end to allow full scrolling */
+  margin-bottom: 750px; /* Large gap at the end to allow full scrolling */
 }
 
 /* Make steps visible when active */
 .step.is-active { opacity: 1; filter: none; }
 
 
-/* Right column: fixed/sticky graph container */
+/* Right column: sticky container */
 .right-column {
   width: 60%;
   position: sticky;
-  top: 20px;
-  padding: 20px;
+  top: 0;
+  height: 100vh; /* Ensures it takes full height */
+  display: flex;
+  align-items: center; /* Centers the graph vertically */
+  justify-content: center; /* Centers the graph horizontally */
   box-sizing: border-box;
 }
 
+/* Graph container */
 .graph-container {
   width: 750px;
   height: 550px;
-  margin: 0 auto;
-  background: #01080D;
-  border: 1px solid #ccc;
+  background: transparent; /* ✅ Removes the black box */
+  border: none; /* ✅ Removes the border if unwanted */
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ✅ Soft shadow for a modern look */
   position: relative;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
 }
 
 /* Optionally style any SVG inside the graph container */
+/* Make sure the SVG inside the graph is visible */
 .graph-container svg {
-  display: block;
-  margin: 0 auto 40px;
-  background: #fff;
-  border: 1px solid #ccc;
+  background: none; /* ✅ Ensures no unwanted background */
+  border: none; /* ✅ Removes any borders */
   border-radius: 4px;
 }
 
