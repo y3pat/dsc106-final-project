@@ -83,7 +83,7 @@ header {
 /* Graph container */
 .graph-container {
   width: 750px;
-  height: 550px;
+  height: 600px;
   background: rgba(255, 255, 255, 0.95); /* Lightened for contrast */
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Softer, modern shadow */

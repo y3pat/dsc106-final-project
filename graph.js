@@ -14,18 +14,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.allEdaData = edaData;
   window.allHrData = hrData;
 
-  // Create two SVGs for EDA and HR inside the graph-container.
-  const container = d3.select("#graph-container");
+ // Create two titles and SVGs for EDA and HR inside the graph-container
+const container = d3.select("#graph-container");
 
-  const edaSvg = container.append("svg")
-    .attr("id", "eda-chart")
-    .attr("width", 600)
-    .attr("height", 250);
+// Append titles
+container.append("h3")
+  .text("Electrodermal Activity (EDA)")
+  .style("text-align", "center")
+  .style("margin-bottom", "5px")
+  .style("font-family", "Roboto, sans-serif");
 
-  const hrSvg = container.append("svg")
-    .attr("id", "hr-chart")
-    .attr("width", 600)
-    .attr("height", 250);
+const edaSvg = container.append("svg")
+  .attr("id", "eda-chart")
+  .attr("width", 600)
+  .attr("height", 250);
+
+container.append("h3")
+  .text("Heart Rate (HR)")
+  .style("text-align", "center")
+  .style("margin-top", "15px")
+  .style("margin-bottom", "5px")
+  .style("font-family", "Roboto, sans-serif");
+
+const hrSvg = container.append("svg")
+  .attr("id", "hr-chart")
+  .attr("width", 600)
+  .attr("height", 250);
 
   // Tooltip setup
   const tooltip = d3.select("body").append("div")
