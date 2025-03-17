@@ -15,7 +15,7 @@ html, body {
 header {
   text-align: center;
   padding: 20px;
-  background: #e0e0e0;
+  /* background: #e0e0e0; */
 }
 
 /* Two-column container */
@@ -42,7 +42,7 @@ header {
   filter: blur(2px);
   transition: opacity 0.6s ease, filter 0.6s ease;
   padding: 75px;  /* Enough breathing room without affecting detection */
-  margin-top: 700px;  /* Ensures space between steps */
+  margin-top: 250px;  /* Ensures space between steps */
   margin-bottom: 450px; /* Even spacing between steps */
 }
 
