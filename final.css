@@ -6,6 +6,12 @@ body {
   background-color: #F2E8DC;
   color: #01080D;
 }
+
+html, body {
+  overflow: hidden; 
+  height: 100vh;
+}
+
 header {
   text-align: center;
   padding: 20px;
@@ -16,31 +22,49 @@ header {
 .container {
   display: flex;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh; /* Ensures both columns fit within viewport */
+  overflow: hidden;
 }
 
 /* Left column: scrollable steps */
 .left-column {
   width: 40%;
   padding: 20px;
-  overflow-y: auto;
-  height: calc(100vh - 40px); /* Adjust if header height changes */
+  overflow-y: auto !important; /* Enables proper scrolling */
+  height: 100vh; /* Limits column to viewport height */
+  max-height: 100vh; /* Prevents extra height */
+  box-sizing: border-box; /* Ensures padding is counted within height */
 }
+
+/* Step sections */
 .step {
   background: #fff;
-  margin-bottom: 40px;
+  margin-bottom: 250px; /* Increased spacing for smoother triggering */
   padding: 20px;
   border-radius: 6px;
   opacity: 0; /* Start hidden */
   transform: translateY(20px);
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
+
+/* First step (Baseline) */
+.step:first-child {
+  margin-top: 250px; /* Ensures it starts at the top */
+  padding-top: 50px; /* Adds slight padding for readability */
+}
+
+/* Last step (Final Test) */
+.step:last-child {
+  margin-bottom: 500px; /* Large gap at the end to allow full scrolling */
+}
+
+/* Make steps visible when active */
 .step.is-active {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Right column: fixed/ sticky graph container */
+/* Right column: fixed/sticky graph container */
 .right-column {
   width: 60%;
   position: sticky;
@@ -48,6 +72,7 @@ header {
   padding: 20px;
   box-sizing: border-box;
 }
+
 .graph-container {
   width: 750px;
   height: 550px;
