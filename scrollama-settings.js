@@ -2,6 +2,7 @@ const scroller = scrollama();
 const leftColumn = document.querySelector(".left-column"); // Scrollable section
 const graphContainer = document.querySelector("#graph-container"); // Graph container
 const animationContainer = document.querySelector("#animation-container"); // Animation container
+const stroopGameContainer = document.querySelector("#stroop-game-container"); // Stroop Game container
 
 function handleStepEnter(response) {
   console.log("Entering step:", response.element.getAttribute("data-test")); // Debugging log
@@ -16,20 +17,25 @@ function handleStepEnter(response) {
   if (testName === "introduction") {
     console.log("Displaying animation for introduction");
     graphContainer.style.display = "none";
-    animationContainer.style.display = "flex"; // Show animation container
+    animationContainer.style.display = "flex";
+    stroopGameContainer.style.display = "none";
     
     if (typeof startAnimation === "function") {
       startAnimation("introduction"); // Trigger animation if applicable
     }
     return;
   } else {
-    animationContainer.style.display = "none"; // Hide animations for all other steps
+    animationContainer.style.display = "none";
   }
 
   if (testName === "conclusion") {
-    console.log(`Skipping graph update for: ${testName}`);
+    console.log("Displaying Stroop Test Game for conclusion");
     graphContainer.style.display = "none";
+    stroopGameContainer.style.display = "block";
+    startStroopGame(); // Start the Stroop Test Game
     return;
+  } else {
+    stroopGameContainer.style.display = "none";
   }
 
   // Show graph container for test steps

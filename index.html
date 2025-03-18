@@ -117,6 +117,16 @@
       <!-- Animation Container: Shown only for the introduction step -->
       <div id="animation-container" style="display: none;"></div>
 
+      <div id="stroop-game-container" style="display: none;">
+        <h2>Stroop Test Challenge</h2>
+        <p>Pick the **color** of the word, not what it says!</p>
+        <p id="stroop-timer">Time Left: 3s</p>
+        <div id="stroop-word" style="font-size: 32px; font-weight: bold;"></div>
+        <div id="stroop-options"></div>
+        <p id="stroop-feedback"></p>
+        <p>Score: <span id="stroop-score">0</span></p>
+      </div>
+  
       <div class="graph-wrapper">
         <!-- Graph Container: The regular EDA & HR graphs -->
         <div class="graph-container" id="graph-container">
@@ -137,6 +147,7 @@
   <script src="graph.js"></script>
   <script src="scrollama-settings.js"></script>
   <script src="stress-animations.js"></script>
+  <script src="stroop-game.js"></script>
 </body>
 </html>
 
