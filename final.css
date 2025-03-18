@@ -85,8 +85,6 @@ header {
   width: 750px;
   height: 600px;
   background: rgba(255, 255, 255, 0.95); /* Lightened for contrast */
-  border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Softer, modern shadow */
   position: relative;
   padding: 20px;
   display: flex;
@@ -155,4 +153,38 @@ header {
 .comparison-tooltip {
   background-color: orange;
   color: white;
+}
+
+
+/* Animation container (inside the graph area) */
+#animation-container {
+  width: 30%; /* Responsive width */
+  max-width: 200px; /* Prevents it from getting too large */
+  height: auto; /* Maintain aspect ratio */
+  aspect-ratio: 1 / 1; /* Ensures it remains square */
+  background: none; /* No background */
+  display: flex; /* Centers the content */
+  align-items: center;
+  justify-content: center;
+  
+  position: absolute; /* Positions it relative to .graph-container */
+  top: 5%; /* Aligns it inside the graph */
+  left: 70%;
+  transform: translate(-50%, 0); /* Centers it properly */
+  
+  pointer-events: none; /* Ensures it doesn't interfere with tooltips */
+  z-index: 10; /* Ensures it stays above the graph */
+}
+
+/* Ensure the graph-container is properly positioned */
+.graph-container {
+  position: relative; /* Allows absolute positioning inside */
+}
+
+
+
+/* Hide animations when intro/conclusion is active */
+.intro-step.is-active ~ .right-column #animation-container,
+.conclusion-step.is-active ~ .right-column #animation-container {
+  display: none;
 }

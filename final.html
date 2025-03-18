@@ -35,23 +35,31 @@
       </section>
     </div>
 
+    <!-- Right Column -->
     <div class="right-column">
-      <div class="graph-container" id="graph-container" style="display: flex; align-items: center;">
-        <div class="graph-content">
-          <div class="comparison-toggle">
-            <label for="compare-select">Compare with:</label>
-            <select id="compare-select"></select>
-          </div>
-          <svg id="eda-chart" width="600" height="250"></svg>
-          <svg id="hr-chart" width="600" height="250"></svg>
-        </div>
+      <!-- Independent Animation Container (Separated from the graphs) -->
+      <div id="animation-container"></div>
 
-        <!-- Legend Positioned to the Right -->
-        <div id="graph-legend" style="width: 150px; padding-left: 20px; display: flex; flex-direction: column; align-items: flex-start;"></div>
+      <div class="graph-wrapper">
+        <!-- Graph Container: The regular EDA & HR graphs -->
+        <div class="graph-container" id="graph-container">
+          <div class="graph-content">
+            <div class="comparison-toggle">
+              <label for="compare-select">Compare with:</label>
+              <select id="compare-select"></select>
+            </div>
+            <svg id="eda-chart" width="600" height="250"></svg>
+            <svg id="hr-chart" width="600" height="250"></svg>
+          </div>
+
+          <!-- Legend Positioned to the Right -->
+          <div id="graph-legend" style="width: 150px; padding-left: 20px; display: flex; flex-direction: column; align-items: flex-start;"></div>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="stress-animations.js"></script> <!-- Load animation script -->
   <script src="graph.js"></script>
   <script src="scrollama-settings.js"></script>
 </body>

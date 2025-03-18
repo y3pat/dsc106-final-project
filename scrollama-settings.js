@@ -1,33 +1,40 @@
 const scroller = scrollama();
 const leftColumn = document.querySelector(".left-column"); // Scrollable section
 const graphContainer = document.querySelector("#graph-container"); // Graph container
+const animationContainer = document.querySelector("#animation-container"); // Animation container
 
 function handleStepEnter(response) {
   console.log("Entering step:", response.element.getAttribute("data-test")); // Debugging log
 
   // Remove active class from all steps
   d3.selectAll(".step").classed("is-active", false);
-  // Add active class to the current step
   d3.select(response.element).classed("is-active", true);
 
   // Get the test name from data-test
   const testName = response.element.getAttribute("data-test");
 
-  // If the introduction or conclusion is active, hide the graph
+  // If intro or conclusion, hide graphs and animations
   if (testName === "introduction" || testName === "conclusion") {
-    console.log(`Skipping graph update for: ${testName}`);
-    graphContainer.style.display = "none"; // Hide the graph container
+    console.log(`Skipping graph and animation update for: ${testName}`);
+    graphContainer.style.display = "none";
+    if (animationContainer) animationContainer.style.display = "none"; // Ensure animationContainer exists
     return;
   }
 
-  // Show graph container when a test section is active
+  // Show graph and animation container for test steps
   graphContainer.style.display = "flex";
+  animationContainer.style.display = "block";
 
   // Ensure data is available before updating graphs
   if (window.allEdaData && window.allHrData) {
     updateGraphsForTest(testName);
   } else {
     console.warn(`Skipping ${testName} - Data not available yet.`);
+  }
+
+  // Trigger animation for the current test step
+  if (typeof startAnimation === "function") {
+    startAnimation(testName);
   }
 }
 
@@ -56,9 +63,9 @@ function checkScrollPosition() {
 function waitForDataAndStart() {
   const checkDataLoaded = setInterval(() => {
     if (window.allEdaData && window.allHrData) {
-      updateGraphsForTest("baseline"); // Load baseline graph immediately
+      updateGraphsForTest("baseline");
       document.querySelector(".step:first-child").classList.add("is-active");
-      clearInterval(checkDataLoaded); // Stop checking
+      clearInterval(checkDataLoaded);
 
       // ✅ Now that data is ready, initialize Scrollama
       initScrollama();

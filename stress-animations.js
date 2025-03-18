@@ -1,202 +1,158 @@
-// stress-animations.js
+// stress-animations.js (Refactored to integrate with Scrollama & Scrollytelling)
+document.addEventListener("DOMContentLoaded", function () {
+    const stressTasks = {
+        "tmct": animateThinking,
+        "real_opinion": animateTalking,
+        "opposite_opinion": animateConfused,
+        "subtract_test": animateSubtraction,
+        "stroop": animateStroopTest
 
-// Set the dimensions and margins of the graph
-const margin = { top: 50, right: 25, bottom: 45, left: 50 },
-      width = 700 - margin.left - margin.right,
-      height = 420 - margin.top - margin.bottom;
+    };
 
-// Append the SVG object to the container with id "stress_viz"
-const svg = d3.select("#stress_viz")
-    .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+    // Select the existing animation container instead of appending a new one
+    const svg = d3.select("#animation-container")
+        .append("svg")
+        .attr("width", 300) // Adjust width to match container size
+        .attr("height", 300) // Adjust height
+        .style("overflow", "visible"); // Prevent clipping issues
 
-// Set colours for plot
-const color_mapping = {
-    red: '#A6055D',
-    grey: '#777',
-    green: '#00C184'
-};
 
-// Create a tooltip div
-var tooltip = d3.select("#stress_viz")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip");
+    function clearAnimation() {
+        svg.selectAll("*").remove();
+    }
 
-// Helper function to return tooltip text based on step
-function returnTooltipText(step, d) {
-    switch (step) {
-        case 'title':
-            return d.index + ": " + d.title;
-        case 'title score':
-            return d.index + ": " + d.title + " - sentiment score: " + d.score;
-        case 'title score magnitude':
-            return d.index + ": " + d.title + " - sentiment score: " + d.score + " - magnitude: " + d.magnitude;
-        default:
-            return "";
+    function drawStickFigure() {
+        return {
+            head: svg.append("circle").attr("cx", 250).attr("cy", 100).attr("r", 30).attr("fill", "black"),
+            body: svg.append("line").attr("x1", 250).attr("y1", 130).attr("x2", 250).attr("y2", 250).attr("stroke", "black").attr("stroke-width", 5),
+            leftArm: svg.append("line").attr("x1", 250).attr("y1", 160).attr("x2", 200).attr("y2", 190).attr("stroke", "black").attr("stroke-width", 5),
+            rightArm: svg.append("line").attr("x1", 250).attr("y1", 160).attr("x2", 300).attr("y2", 190).attr("stroke", "black").attr("stroke-width", 5),
+            leftLeg: svg.append("line").attr("x1", 250).attr("y1", 250).attr("x2", 220).attr("y2", 350).attr("stroke", "black").attr("stroke-width", 5),
+            rightLeg: svg.append("line").attr("x1", 250).attr("y1", 250).attr("x2", 280).attr("y2", 350).attr("stroke", "black").attr("stroke-width", 5)
+        };
     }
-}
 
-// Tooltip show/hide functions
-var showTooltip = function(d) {
-    tooltip.transition().duration(200)
-        .style("opacity", 1)
-        .text(returnTooltipText(toolTipState, d));
-};
-var hideTooltip = function(d) {
-    tooltip.transition().duration(200)
-        .style("opacity", 0);
-};
+    function animateThinking() {
+        clearAnimation();
+        const stickFigure = drawStickFigure();
 
-// Load your stress data (ensure your JSON file has the appropriate structure)
-d3.json("./proposal/data/stress_data.json").then(data => {
-    
-    // Save the data globally for use in update functions
-    window.stressData = data;
-    
-    // Create X scale based on time
-    const x = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.time))
-        .range([0, width]);
-    
-    // Create Y scale based on EDA values (for demonstration)
-    const y = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.eda))
-        .range([height, 0]);
-    
-    // Append X and Y axes (initially hidden, opacity 0)
-    svg.append("g")
-        .attr("transform", `translate(0, ${height})`)
-        .attr("class", "Xaxis axis")
-        .style("opacity", 0)
-        .call(d3.axisBottom(x));
-    
-    svg.append("g")
-        .attr("class", "Yaxis axis")
-        .style("opacity", 0)
-        .call(d3.axisLeft(y));
-    
-    // (Optional) Scale for bubble size
-    const z = d3.scaleLinear()
-        .domain([0, 1])
-        .range([1, 4]);
-    
-    // Add bubble chart (each data point becomes a circle)
-    const bubbleChart = svg.append('g')
-        .attr("class", "chart")
-        .selectAll("circle")
-        .data(data)
-        .join("circle")
-            .attr("class", "bubbles")
-            .attr("cx", d => x(d.time))
-            .attr("cy", d => y(d.eda))
-            .attr("r", 10)
-            .style("fill", "#F2E8DC")
-            .attr("stroke", "white")
-        .on("mouseover", showTooltip)
-        .on("mouseleave", hideTooltip);
-    
-    // Global axis objects for updating
-    var xAxis = d3.axisBottom().scale(x);
-    var yAxis = d3.axisLeft().scale(y);
-    
-    // Define update functions for different steps.
-    function dotColorGrey() {
-        bubbleChart
-            .transition()
-            .duration(1000)
-            .attr("r", 10)
-            .style("fill", "#F2E8DC");
+        stickFigure.leftArm.transition().duration(800).attr("x2", 230).attr("y2", 120);
+        stickFigure.rightArm.transition().duration(800).attr("x2", 270).attr("y2", 120);
+
+        let startY = 70;
+        let centerX = 250;
+        let spacing = 80;
+        let number = Math.floor(Math.random() * 50) + 50;
+        let terms = Math.floor(Math.random() * 2) + 2;
+
+        for (let i = 0; i < terms; i++) {
+            let operation = Math.random() < 0.5 ? '-' : '+';
+            let operand = Math.floor(Math.random() * 20) + 1;
+            let newNumber = operation === '-' ? number - operand : number + operand;
+
+            svg.append("text")
+                .attr("x", centerX - ((terms - 1) * spacing / 2) + (i * spacing))
+                .attr("y", startY)
+                .attr("font-size", "20px")
+                .attr("fill", "black")
+                .attr("opacity", 0)
+                .text(`${number} ${operation} ${operand}`)
+                .transition()
+                .delay(i * 1000)
+                .duration(2500)
+                .attr("y", 40)
+                .attr("opacity", 1)
+                .transition()
+                .duration(1200)
+                .attr("opacity", 0)
+                .remove();
+
+            number = newNumber;
+        }
     }
-    window.dotColorGrey = dotColorGrey;
-    
-    function dotColorSentiment() {
-        bubbleChart
-            .transition()
-            .duration(1000)
-            .attr("r", 10)
-            .style("fill", function(d) { 
-                if (d.score > 0) { return color_mapping.green; }
-                else if (d.score < 0) { return color_mapping.red; }
-                else { return color_mapping.grey; }
-            });
+
+    function animateTalking() {
+        clearAnimation();
+        const stickFigure = drawStickFigure();
+
+        stickFigure.leftArm.transition().duration(500).attr("x2", 180).attr("y2", 170);
+        stickFigure.rightArm.transition().duration(500).attr("x2", 320).attr("y2", 170);
+
+        svg.append("text")
+            .attr("x", 280).attr("y", 80).attr("font-size", "20px").attr("fill", "black").attr("opacity", 0)
+            .text("I think...")
+            .transition().duration(500)
+            .attr("opacity", 1)
+            .transition().duration(2000)
+            .attr("opacity", 0)
+            .remove();
     }
-    window.dotColorSentiment = dotColorSentiment;
-    
-    function dotResize() {
-        x.domain(d3.extent(data, d => d.time));
-        svg.selectAll(".Xaxis")
-            .transition()
-            .duration(1000)
-            .call(xAxis);
-        y.domain(d3.extent(data, d => d.eda));
-        svg.selectAll(".Yaxis")
-            .transition()
-            .duration(1000)
-            .call(yAxis);
-        bubbleChart
-            .transition()
-            .duration(1000)
-            .attr("cx", d => x(d.time))
-            .attr("cy", d => y(d.eda))
-            .attr("r", d => (d.magnitude * 2.7));
+
+    function animateConfused() {
+        clearAnimation();
+        const stickFigure = drawStickFigure();
+
+        stickFigure.head.transition().duration(300)
+            .attr("cx", 245)
+            .transition().duration(300)
+            .attr("cx", 255)
+            .transition().duration(300)
+            .attr("cx", 250);
+
+        stickFigure.leftArm.transition().duration(500).attr("x2", 270).attr("y2", 160);
+        stickFigure.rightArm.transition().duration(500).attr("x2", 230).attr("y2", 160);
     }
-    window.dotResize = dotResize;
-    
-    function dotPositionScore() {
-        x.domain([-.8, .8]);
-        svg.selectAll(".Xaxis")
-            .transition()
-            .duration(1000)
-            .style("opacity", 1)
-            .call(xAxis);
-        y.domain([0, 2]);
-        svg.selectAll(".Yaxis")
-            .transition()
-            .duration(1000)
-            .call(yAxis);
-        bubbleChart
-            .transition()
-            .duration(1000)
-            .attr("cx", d => x(d.score))
-            .attr("cy", d => y(d.eda));
+
+    function animateSubtraction() {
+        clearAnimation();
+        const stickFigure = drawStickFigure();
+
+        stickFigure.rightArm.transition().duration(500)
+            .attr("x2", 280)
+            .attr("y2", 210)
+            .transition().duration(500)
+            .attr("x2", 300)
+            .attr("y2", 220);
+
+        svg.append("text")
+            .attr("x", 290).attr("y", 220).attr("font-size", "18px").attr("fill", "black").text("1022 - 13...");
     }
-    window.dotPositionScore = dotPositionScore;
-    
-    function dotPositionMagnitude() {
-        y.domain([1, d3.max(data, d => d.magnitude + 1)]);
-        svg.selectAll(".Yaxis")
+
+    function animateStroopTest() {
+        clearAnimation();
+        const stickFigure = drawStickFigure();
+
+        stickFigure.leftArm.transition().duration(500).attr("x2", 180).attr("y2", 170);
+        stickFigure.rightArm.transition().duration(500).attr("x2", 320).attr("y2", 170);
+
+        svg.append("text")
+            .attr("x", 70).attr("y", 100)
+            .attr("font-size", "30px")
+            .attr("fill", "red")
+            .text("GREEN");
+
+        svg.append("text")
+            .attr("x", 280).attr("y", 50)
+            .attr("font-size", "20px")
+            .attr("fill", "black")
+            .attr("opacity", 0)
+            .text("RED!")
             .transition()
-            .duration(1000)
-            .style("opacity", 1)
-            .call(yAxis);
-        bubbleChart
+            .delay(1000)
+            .duration(500)
+            .attr("opacity", 1)
             .transition()
-            .duration(1000)
-            .style("fill", function(d) { 
-                if (d.score > 0) { return color_mapping.green; }
-                else if (d.score < 0) { return color_mapping.red; }
-                else { return color_mapping.grey; }
-            })
-            .attr("r", d => (d.magnitude * 2))
-            .attr("cy", d => y(d.magnitude));
+            .duration(800)
+            .attr("opacity", 0)
+            .remove();
     }
-    window.dotPositionMagnitude = dotPositionMagnitude;
-    
-    function dotSimplify() {
-        bubbleChart
-            .transition()
-            .duration(1000)
-            .style("fill", "black")
-            .attr("r", 5);
-    }
-    window.dotSimplify = dotSimplify;
-    
-    // (Optional) Functions for drawing paths can be added here.
-    
-}).catch(err => {
-    console.error("Error processing stress data:", err);
+
+    // Function to trigger animation on scroll
+    window.startAnimation = function(testName) {
+        if (stressTasks[testName]) {
+            stressTasks[testName]();
+        } else {
+            clearAnimation();
+        }
+    };
 });

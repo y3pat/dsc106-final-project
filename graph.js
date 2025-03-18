@@ -121,6 +121,7 @@ function normalizeTime(data) {
   }));
 }
 // Function to draw graphs with a properly placed legend
+// Function to draw graphs with a properly placed legend
 function drawComparisonChart(svgSelector, primaryData, comparisonData, title, key, color, comparisonTest) {
   const svg = d3.select(svgSelector);
   svg.selectAll("*").remove(); // Clear previous graph
@@ -153,12 +154,13 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
     xScale = d3.scaleLinear().domain(d3.extent(primaryData, d => d.time)).range([0, innerWidth]);
   }
 
+  // ✅ Expanding Y-axis range for better spacing
   const combinedData = [...primaryData, ...(comparisonData || [])];
-
-  yScale = d3.scaleLinear().domain(d3.extent(combinedData, d => d[key])).nice().range([innerHeight, 0]);
+  const yMin = d3.min(combinedData, d => d[key]) * 0.95; // 5% margin below min
+  const yMax = d3.max(combinedData, d => d[key]) * 1.05; // 5% margin above max
+  yScale = d3.scaleLinear().domain([yMin, yMax]).nice().range([innerHeight, 0]);
 
   g.append("g").attr("transform", `translate(0,${innerHeight})`).call(d3.axisBottom(xScale));
-
   g.append("g").call(d3.axisLeft(yScale));
 
   // **🔹 RE-ADD AXIS LABELS 🔹**
@@ -229,12 +231,15 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
 
       hoverLine.attr("x1", mouseX).attr("x2", mouseX).style("opacity", 1);
 
-      let primaryText = `Selected: ${closestPrimary[key].toFixed(2)}`;
+      // ✅ Correct metric name (BPM for HR, μS for EDA)
+      const metricLabel = key === "eda" ? "μS" : "BPM";
+
+      let primaryText = `${closestPrimary[key].toFixed(2)} ${metricLabel}`;
       let comparisonText = "";
 
       if (closestComparison) {
         const percentDiff = ((closestComparison[key] - closestPrimary[key]) / closestPrimary[key]) * 100;
-        comparisonText = `Comparison: ${closestComparison[key].toFixed(2)} (${percentDiff.toFixed(1)}%)`;
+        comparisonText = `${closestComparison[key].toFixed(2)} ${metricLabel} (${percentDiff.toFixed(1)}%)`;
       }
 
       primaryTooltip.text(primaryText);
@@ -244,7 +249,7 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
         comparisonTooltip.style("opacity", 0);
       }
 
-      // **✅ FIXED: Tooltip Background Matches Graph Line Color**
+      // ✅ Tooltip Background Matches Graph Line Color
       const primaryBgColor = key === "eda" ? "red" : "steelblue"; // EDA -> Red, HR -> Blue
       primaryTooltip.style("background-color", primaryBgColor);
 
@@ -265,5 +270,4 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
 function findClosestDataPoint(data, targetTime) {
   return data.reduce((a, b) => Math.abs(a.time - targetTime) < Math.abs(b.time - targetTime) ? a : b);
 }
-
 
