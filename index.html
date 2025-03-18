@@ -17,7 +17,7 @@
       <section class="step fade-in intro-step" data-test="introduction">
         <h2>Welcome to StressScape</h2>
         <p>College is a chaotic mix of exams, deadlines, job hunting, and the existential dread of pretending to have your life together. 
-          But have you ever wondered **how stress actually affects you**? 
+          But have you ever wondered <strong>how stress actually affects you?</strong>
           This interactive journey breaks down the science behind stress—one painfully relatable scenario at a time.</p>
       </section>
       <section class="step fade-in" data-test="baseline">
@@ -114,8 +114,8 @@
 
     <!-- Right Column -->
     <div class="right-column">
-      <!-- Independent Animation Container (Separated from the graphs) -->
-      <div id="animation-container"></div>
+      <!-- Animation Container: Shown only for the introduction step -->
+      <div id="animation-container" style="display: none;"></div>
 
       <div class="graph-wrapper">
         <!-- Graph Container: The regular EDA & HR graphs -->
@@ -128,8 +128,6 @@
             <svg id="eda-chart" width="600" height="250"></svg>
             <svg id="hr-chart" width="600" height="250"></svg>
           </div>
-
-          <!-- Legend Positioned to the Right -->
           <div id="graph-legend" style="width: 150px; padding-left: 20px; display: flex; flex-direction: column; align-items: flex-start;"></div>
         </div>
       </div>
@@ -138,5 +136,7 @@
 
   <script src="graph.js"></script>
   <script src="scrollama-settings.js"></script>
+  <script src="stress-animations.js"></script>
 </body>
 </html>
+

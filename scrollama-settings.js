@@ -13,28 +13,33 @@ function handleStepEnter(response) {
   // Get the test name from data-test
   const testName = response.element.getAttribute("data-test");
 
-  // If intro or conclusion, hide graphs and animations
-  if (testName === "introduction" || testName === "conclusion") {
-    console.log(`Skipping graph and animation update for: ${testName}`);
+  if (testName === "introduction") {
+    console.log("Displaying animation for introduction");
     graphContainer.style.display = "none";
-    if (animationContainer) animationContainer.style.display = "none"; // Ensure animationContainer exists
+    animationContainer.style.display = "flex"; // Show animation container
+    
+    if (typeof startAnimation === "function") {
+      startAnimation("introduction"); // Trigger animation if applicable
+    }
+    return;
+  } else {
+    animationContainer.style.display = "none"; // Hide animations for all other steps
+  }
+
+  if (testName === "conclusion") {
+    console.log(`Skipping graph update for: ${testName}`);
+    graphContainer.style.display = "none";
     return;
   }
 
-  // Show graph and animation container for test steps
+  // Show graph container for test steps
   graphContainer.style.display = "flex";
-  animationContainer.style.display = "block";
 
   // Ensure data is available before updating graphs
   if (window.allEdaData && window.allHrData) {
     updateGraphsForTest(testName);
   } else {
     console.warn(`Skipping ${testName} - Data not available yet.`);
-  }
-
-  // Trigger animation for the current test step
-  if (typeof startAnimation === "function") {
-    startAnimation(testName);
   }
 }
 
