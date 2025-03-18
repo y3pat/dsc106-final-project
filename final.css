@@ -82,8 +82,8 @@ header {
 
 /* Graph container */
 .graph-container {
-  width: 750px;
-  height: 600px;
+  width: 650px;
+  height: 500px;
   background: rgba(255, 255, 255, 0.95); /* Lightened for contrast */
   position: relative;
   padding: 20px;
@@ -91,6 +91,7 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 1px;
 }
 
 /* Ensure the SVG inside the graph is clean */
@@ -187,4 +188,23 @@ header {
 .intro-step.is-active ~ .right-column #animation-container,
 .conclusion-step.is-active ~ .right-column #animation-container {
   display: none;
+}
+
+#graph-legend {
+  position: absolute;
+  top: 10px; /* Move the legend higher up */
+  right: 20px; /* Ensure it's positioned correctly */
+  background: rgba(255, 255, 255, 0.9); /* Light background for readability */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 125; /* Ensure it stays on top */
+}
+
+.step:first-of-type {
+  margin-top: 115px;                  
 }
