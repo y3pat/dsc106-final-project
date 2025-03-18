@@ -121,7 +121,6 @@ function normalizeTime(data) {
   }));
 }
 // Function to draw graphs with a properly placed legend
-// Function to draw graphs with a properly placed legend
 function drawComparisonChart(svgSelector, primaryData, comparisonData, title, key, color, comparisonTest) {
   const svg = d3.select(svgSelector);
   svg.selectAll("*").remove(); // Clear previous graph
@@ -179,25 +178,43 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
     .style("font-size", "14px")
     .text(key === "eda" ? "Microsiemens (μS)" : "Beats per Minute (BPM)");
 
-  // **📈 DRAW DATA LINES**
+  // **📈 DRAW DATA LINES WITH ANIMATION**
   const line = d3.line()
     .x(d => xScale(d.time))
     .y(d => yScale(d[key]))
     .curve(d3.curveMonotoneX);
 
-  g.append("path").datum(primaryData)
-    .attr("fill", "none").attr("stroke", color)
-    .attr("stroke-width", 2).attr("d", line);
+  const path = g.append("path")
+    .datum(primaryData)
+    .attr("fill", "none")
+    .attr("stroke", color)
+    .attr("stroke-width", 2)
+    .attr("d", line)
+    .attr("stroke-dasharray", function() { return this.getTotalLength(); }) // Get line length
+    .attr("stroke-dashoffset", function() { return this.getTotalLength(); }) // Start hidden
+    .transition() // Animate from left to right
+    .duration(2000) // 2 seconds animation
+    .ease(d3.easeLinear)
+    .attr("stroke-dashoffset", 0);
 
   g.append("text").attr("x", innerWidth / 2).attr("y", -50) // Title Position
     .attr("text-anchor", "middle").style("font-size", "16px").text(title);
 
-  // **🔸 DRAW COMPARISON LINE IF SELECTED**
+  // **🔸 DRAW COMPARISON LINE IF SELECTED (WITH ANIMATION)**
   if (comparisonData && comparisonData.length > 0) {
-    g.append("path").datum(comparisonData)
-      .attr("fill", "none").attr("stroke", "orange")
-      .attr("stroke-width", 2).attr("stroke-dasharray", "4 4")
-      .attr("d", line);
+    const comparisonPath = g.append("path")
+      .datum(comparisonData)
+      .attr("fill", "none")
+      .attr("stroke", "orange")
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", "4 4")
+      .attr("d", line)
+      .attr("stroke-dasharray", function() { return this.getTotalLength(); }) // Get line length
+      .attr("stroke-dashoffset", function() { return this.getTotalLength(); }) // Start hidden
+      .transition() // Animate from left to right
+      .duration(2000) // 2 seconds animation
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset", 0);
   }
 
   // **🔥 ADD HOVER EFFECT 🔥**
@@ -232,14 +249,14 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
       hoverLine.attr("x1", mouseX).attr("x2", mouseX).style("opacity", 1);
 
       // ✅ Correct metric name (BPM for HR, μS for EDA)
-      const metricLabel = key === "eda" ? "μS" : "BPM";
+      const metricLabel = key === "eda" ? "Microsiemens (μS)" : "Beats per Minute (BPM)";
 
-      let primaryText = `${closestPrimary[key].toFixed(2)} ${metricLabel}`;
+      let primaryText = `${metricLabel}: ${closestPrimary[key].toFixed(2)}`;
       let comparisonText = "";
 
       if (closestComparison) {
         const percentDiff = ((closestComparison[key] - closestPrimary[key]) / closestPrimary[key]) * 100;
-        comparisonText = `${closestComparison[key].toFixed(2)} ${metricLabel} (${percentDiff.toFixed(1)}%)`;
+        comparisonText = `${metricLabel}: ${closestComparison[key].toFixed(2)} (${percentDiff.toFixed(1)}%)`;
       }
 
       primaryTooltip.text(primaryText);
@@ -263,6 +280,7 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
       tooltipContainer.style("opacity", 0);
     });
 }
+
 
 
 
