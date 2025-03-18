@@ -37,11 +37,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function animateIntro() {
         clearAnimation();
-        animateTrierMentalChallenge(100, 50);
-        animateRealOpinion(300, 50);
-        animateOppositeOpinion(500, 50);
-        animateSubtractTest(200, 400);
-        animateStroopTest(400, 400);
+        animateTrierMentalChallenge(-150, 50);
+        animateRealOpinion(50, 50);
+        animateOppositeOpinion(250, 50);
+        animateSubtractTest(-50, 400);
+        animateStroopTest(150, 400);
     }
 
     function animateTrierMentalChallenge(x, y) {
