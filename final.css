@@ -69,6 +69,12 @@ header {
   border-left: 4px solid transparent; /* Initially invisible border */
 }
 
+.step:not(.intro-step):not(.conclusion-step) {
+  font-size: 19px; /* Adjust the size as needed */
+  line-height: 1.6; /* Improves readability */
+}
+
+
 /* Smooth transition when active */
 .step.is-active {
   opacity: 1;
