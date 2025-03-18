@@ -75,12 +75,13 @@ header {
   filter: none;
   transform: translateY(0);
   font-weight: bold;
-  color: #A6055D; /* Stress-related color */
+  color: #170b12; /* Stress-related color */
   padding-left: 20px;
-  border-left: 4px solid #A6055D;
+  border-left: 4px solid #000000;
   transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out,
               color 0.6s ease-in-out, border-color 0.6s ease-in-out;
 }
+
 
 
 /* Right column: sticky container */
@@ -93,6 +94,7 @@ header {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+
 }
 
 /* Graph container */
@@ -142,7 +144,7 @@ header {
 .intro-step.is-active, .conclusion-step.is-active {
   color: #A6055D;
   font-weight: bold;
-  border-left: 6px solid #A6055D;
+  border-left: 6px solid #000000;
 }
 
 .tooltip-container {
@@ -286,7 +288,7 @@ header {
   padding: 15px 35px;
   font-size: 24px;
   font-weight: bold;
-  background: #A6055D;
+  background: #77a8ba;
   color: white;
   border: none;
   border-radius: 12px;
