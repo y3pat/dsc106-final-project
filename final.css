@@ -77,7 +77,7 @@ header {
   font-weight: bold;
   color: #170b12; /* Stress-related color */
   padding-left: 20px;
-  border-left: 4px solid #000000;
+  border-left: 4px solid #aaaaaa;
   transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out,
               color 0.6s ease-in-out, border-color 0.6s ease-in-out;
 }
@@ -144,7 +144,7 @@ header {
 .intro-step.is-active, .conclusion-step.is-active {
   color: #A6055D;
   font-weight: bold;
-  border-left: 6px solid #000000;
+  border-left: 4px solid #aaaaaa;
 }
 
 .tooltip-container {
