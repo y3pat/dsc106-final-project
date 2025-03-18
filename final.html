@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>StressScape Scrollytelling</title>
-  <!-- Load D3 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <!-- Load Scrollama -->
   <script src="https://unpkg.com/scrollama"></script>
   <link rel="stylesheet" href="final.css" />
 </head>
@@ -15,82 +13,37 @@
   </header>
 
   <div class="container">
-    <!-- LEFT COLUMN: scrollable steps for each stress test -->
     <div class="left-column">
-      <!-- Each step has a data attribute identifying the stress test -->
       <section class="step fade-in intro-step" data-test="introduction">
         <h2>Welcome to StressScape</h2>
         <p>Explore how stress affects the human body through interactive visualization.</p>
       </section>
-      <section class="step fade-in" data-test="baseline">
-        <h2>Baseline</h2>
-        <p>Calm state prior to any stressors.</p>
-      </section>
-      
-      <section class="step fade-in" data-test="stroop">
-        <h2>Stroop Test</h2>
-        <p>Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words. Measures cognitive flexibility by naming ink colors of mismatched words.</p>
-      </section>
-
-      <section class="step fade-in" data-test="first_rest">
-        <h2>First Rest</h2>
-        <p>Short break after Stroop to observe recovery.</p>
-      </section>
-
-      <section class="step fade-in" data-test="tmct">
-        <h2>TMCT</h2>
-        <p>The Trier Mental Challenge Test with math tasks and time limits.</p>
-      </section>
-
-      <section class="step fade-in" data-test="second_rest">
-        <h2>Second Rest</h2>
-        <p>Monitoring recovery after TMCT.</p>
-      </section>
-
-      <section class="step fade-in" data-test="real_opinion">
-        <h2>Real Opinion</h2>
-        <p>Expressing real opinions on controversial topics.</p>
-      </section>
-
-      <section class="step fade-in" data-test="rest_between_tests_1">
-        <h2>Rest Between Tests 1</h2>
-        <p>Short break before Opposite Opinion Test.</p>
-      </section>
-
-      <section class="step fade-in" data-test="opposite_opinion">
-        <h2>Opposite Opinion</h2>
-        <p>Arguing against one’s own beliefs.</p>
-      </section>
-
-      <section class="step fade-in" data-test="rest_between_tests_2">
-        <h2>Rest Between Tests 2</h2>
-        <p>Short break before Subtract Test.</p>
-      </section>
-
-      <section class="step fade-in" data-test="subtract_test">
-        <h2>Subtract Test</h2>
-        <p>Inducing acute stress by rapid subtraction tasks.</p>
-      </section>
-
-      <section class="step fade-in" data-test="post_experiment">
-        <h2>Post Experiment</h2>
-        <p>After all tests, observing final recovery.</p>
-      </section>
-
-      <section class="step fade-in">
-        <h2>test</h2>
-        <p>After all tests, observing final recovery.</p>
-      </section>
-      <section class="step fade-in conclusion-step" data-test="conclusion">
-        <h2>Final Thoughts</h2>
-        <p>Understanding stress helps us better manage it. What patterns did you notice? Understanding stress helps us better manage it. What patterns did you notice? Understanding stress helps us better manage it. What patterns did you notice? Understanding stress helps us better manage it. What patterns did you notice? Understanding stress helps us better manage it. What patterns did you notice? Understanding stress helps us better manage it. What patterns did you notice? Understanding stress helps us better manage it. What patterns did you notice?</p>
-      </section>
+      <section class="step fade-in" data-test="baseline"><h2>Baseline</h2><p>Calm state prior to any stressors.</p></section>
+      <section class="step fade-in" data-test="stroop"><h2>Stroop Test</h2><p>Measures cognitive flexibility.</p></section>
+      <section class="step fade-in" data-test="first_rest"><h2>First Rest</h2><p>Short break after Stroop.</p></section>
+      <section class="step fade-in" data-test="tmct"><h2>TMCT</h2><p>The Trier Mental Challenge Test with math tasks.</p></section>
+      <section class="step fade-in" data-test="second_rest"><h2>Second Rest</h2><p>Monitoring recovery after TMCT.</p></section>
+      <section class="step fade-in" data-test="real_opinion"><h2>Real Opinion</h2><p>Expressing real opinions on controversial topics.</p></section>
+      <section class="step fade-in" data-test="rest_between_tests_1"><h2>Rest Between Tests 1</h2><p>Short break before Opposite Opinion Test.</p></section>
+      <section class="step fade-in" data-test="opposite_opinion"><h2>Opposite Opinion</h2><p>Arguing against one’s beliefs.</p></section>
+      <section class="step fade-in" data-test="rest_between_tests_2"><h2>Rest Between Tests 2</h2><p>Short break before Subtract Test.</p></section>
+      <section class="step fade-in" data-test="subtract_test"><h2>Subtract Test</h2><p>Inducing acute stress by rapid subtraction tasks.</p></section>
+      <section class="step fade-in" data-test="post_experiment"><h2>Post Experiment</h2><p>After all tests, observing final recovery.</p></section>
     </div>
 
-    <!-- RIGHT COLUMN: sticky graph container -->
     <div class="right-column">
-      <div class="graph-container" id="graph-container">
-        <!-- The two line charts (EDA & HR) will be appended here by graph.js -->
+      <div class="graph-container" id="graph-container" style="display: flex; align-items: center;">
+        <div class="graph-content">
+          <div class="comparison-toggle">
+            <label for="compare-select">Compare with:</label>
+            <select id="compare-select"></select>
+          </div>
+          <svg id="eda-chart" width="600" height="250"></svg>
+          <svg id="hr-chart" width="600" height="250"></svg>
+        </div>
+
+        <!-- Legend Positioned to the Right -->
+        <div id="graph-legend" style="width: 150px; padding-left: 20px; display: flex; flex-direction: column; align-items: flex-start;"></div>
       </div>
     </div>
   </div>

@@ -8,11 +8,11 @@ body {
   text-align: left;
 }
 
-/* html, body {
+html, body {
   overflow: hidden; 
   height: 100vh;
   text-align: left;
-} */
+}
 
 header {
   text-align: center;

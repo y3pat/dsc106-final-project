@@ -10,166 +10,192 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Store them globally so scrollama-settings.js can call our update function.
+  // Store data globally
   window.allEdaData = edaData;
   window.allHrData = hrData;
+  window.currentComparison = "";
 
- // Create two titles and SVGs for EDA and HR inside the graph-container
-const container = d3.select("#graph-container");
+  document.getElementById("compare-select").addEventListener("change", function () {
+    window.currentComparison = this.value;
+    updateGraphsForTest(window.currentTest, window.currentComparison);
+  });
 
-// Append titles
-container.append("h3")
-  .text("Electrodermal Activity (EDA)")
-  .style("text-align", "center")
-  .style("margin-bottom", "5px")
-  .style("font-family", "Roboto, sans-serif");
-
-const edaSvg = container.append("svg")
-  .attr("id", "eda-chart")
-  .attr("width", 600)
-  .attr("height", 250);
-
-container.append("h3")
-  .text("Heart Rate (HR)")
-  .style("text-align", "center")
-  .style("margin-top", "15px")
-  .style("margin-bottom", "5px")
-  .style("font-family", "Roboto, sans-serif");
-
-const hrSvg = container.append("svg")
-  .attr("id", "hr-chart")
-  .attr("width", 600)
-  .attr("height", 250);
-
-  // Tooltip setup
-  const tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0)
-    .style("position", "absolute")
-    .style("background", "#fff")
-    .style("padding", "5px")
-    .style("border-radius", "5px")
-    .style("border", "1px solid #ccc");
-
-  // Initial draw
   updateGraphsForTest("baseline");
 });
 
-// Function to update the graphs dynamically
-window.updateGraphsForTest = function(testName) {
-  const edaData = window.allEdaData.filter(d => d.test.toLowerCase() === testName.toLowerCase());
-  const hrData = window.allHrData.filter(d => d.test.toLowerCase() === testName.toLowerCase());
+// Function to update graphs dynamically based on scrolling + dropdown
+window.updateGraphsForTest = function(testName, comparisonTest = "") {
+  window.currentTest = testName;
 
-  drawLineChart("#eda-chart", edaData, "eda", "steelblue");
-  drawLineChart("#hr-chart", hrData, "hr", "red");
+  // ✅ Reset dropdown when scrolling to a new step
+  if (window.currentComparison !== comparisonTest) {
+      document.getElementById("compare-select").value = ""; // Set dropdown to "None"
+      window.currentComparison = "";
+  }
+
+  updateDropdownOptions(testName); // Update dropdown options
+  updateLegend(testName, comparisonTest); // Update legend placement
+
+  const primaryEdaData = window.allEdaData.filter(d => d.test === testName);
+  const primaryHrData = window.allHrData.filter(d => d.test === testName);
+
+  const comparisonEdaData = comparisonTest ? window.allEdaData.filter(d => d.test === comparisonTest) : null;
+  const comparisonHrData = comparisonTest ? window.allHrData.filter(d => d.test === comparisonTest) : null;
+
+  drawComparisonChart("#eda-chart", primaryEdaData, comparisonEdaData, "Electrodermal Activity (EDA)", "eda", "red", comparisonTest);
+  drawComparisonChart("#hr-chart", primaryHrData, comparisonHrData, "Heart Rate (HR)", "hr", "steelblue", comparisonTest);
 };
 
-// Function to create an interactive line chart
-function drawLineChart(svgSelector, data, valueKey, strokeColor) {
-  const svg = d3.select(svgSelector);
-  svg.selectAll("*").remove(); // Clear previous graph
+// Function to update the dropdown menu to exclude the selected step
+function updateDropdownOptions(selectedTest) {
+  const dropdown = document.getElementById("compare-select");
+  const testNames = [
+      "baseline", "stroop", "first_rest", "tmct", "second_rest",
+      "real_opinion", "opposite_opinion", "subtract_test", "post_experiment"
+  ];
 
-  const width = +svg.attr("width");
-  const height = +svg.attr("height");
-  const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+  dropdown.innerHTML = '<option value="">None</option>'; // Reset dropdown
+
+  testNames.forEach(test => {
+      if (test !== selectedTest) {
+          const option = document.createElement("option");
+          option.value = test;
+          option.textContent = formatTestName(test);
+          dropdown.appendChild(option);
+      }
+  });
+
+  // ✅ Ensure the dropdown retains the selected value
+  dropdown.value = window.currentComparison || "";
+}
+
+// Function to update the legend and place it on the right side
+function updateLegend(selectedTest, comparisonTest) {
+  const legendContainer = document.getElementById("graph-legend");
+  legendContainer.innerHTML = ""; // Clear previous legend
+
+  legendContainer.style.fontSize = "14px";
+  legendContainer.style.display = "flex";
+  legendContainer.style.flexDirection = "column";
+  legendContainer.style.alignItems = "flex-start";
+
+  // Selected test legend (EDA & HR)
+  const selectedEdaLegend = document.createElement("div");
+  selectedEdaLegend.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; 
+                                   background-color: red; margin-right: 5px;"></span> 
+                                   EDA - ${formatTestName(selectedTest)}`;
+  legendContainer.appendChild(selectedEdaLegend);
+
+  const selectedHrLegend = document.createElement("div");
+  selectedHrLegend.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; 
+                                  background-color: steelblue; margin-right: 5px;"></span> 
+                                  HR - ${formatTestName(selectedTest)}`;
+  legendContainer.appendChild(selectedHrLegend);
+
+  // Comparison test legend (only one entry for both EDA & HR)
+  if (comparisonTest) {
+      const comparisonLegend = document.createElement("div");
+      comparisonLegend.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; 
+                                    background-color: orange; margin-right: 5px;"></span> 
+                                    ${formatTestName(comparisonTest)}`;
+      legendContainer.appendChild(comparisonLegend);
+  }
+}
+
+
+// Function to format test names for dropdown
+function formatTestName(testName) {
+  return testName.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+}
+// Function to normalize time (only when comparing)
+function normalizeTime(data) {
+  if (!data || data.length === 0) return [];
+
+  const minTime = d3.min(data, d => d.time);
+  const maxTime = d3.max(data, d => d.time);
+
+  return data.map(d => ({
+      time: (d.time - minTime) / (maxTime - minTime) * 100, // Scale time between 0-100
+      eda: d.eda,
+      hr: d.hr
+  }));
+}
+// Function to draw graphs with a properly placed legend
+function drawComparisonChart(svgSelector, primaryData, comparisonData, title, key, color, comparisonTest) {
+  const svg = d3.select(svgSelector);
+  svg.selectAll("*").remove();
+
+  const width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+  const margin = { top: 40, right: 50, bottom: 60, left: 70 }; // Increased left margin for Y-labels
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
-  // Create group for the chart
-  const g = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  if (!data.length) {
-    g.append("text")
-      .attr("x", innerWidth / 2)
-      .attr("y", innerHeight / 2)
-      .attr("text-anchor", "middle")
-      .text("No data for this test.");
-    return;
+  if (!primaryData.length) {
+      g.append("text").attr("x", innerWidth / 2).attr("y", innerHeight / 2)
+          .attr("text-anchor", "middle").text("No data for this test.");
+      return;
   }
 
-  // X scale (time)
-  const xScale = d3.scaleLinear()
-    .domain(d3.extent(data, d => d.time))
-    .range([0, innerWidth]);
+  let xScale, yScale;
 
-  // Y scale (valueKey: eda or hr)
-  const yScale = d3.scaleLinear()
-    .domain(d3.extent(data, d => d[valueKey]))
-    .nice()
-    .range([innerHeight, 0]);
+  let xAxisLabel = "Time (Seconds)"; // Default label
+  if (comparisonTest) {
+      primaryData = normalizeTime(primaryData);
+      comparisonData = normalizeTime(comparisonData);
+      xScale = d3.scaleLinear().domain([0, 100]).range([0, innerWidth]);
+      xAxisLabel = "Normalized Time"; // Change label when comparing tests
+  } else {
+      xScale = d3.scaleLinear().domain(d3.extent(primaryData, d => d.time)).range([0, innerWidth]);
+  }
 
-  // Append axes
-  const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale);
+  const combinedData = [...primaryData, ...(comparisonData || [])];
 
-  g.append("g")
-    .attr("transform", `translate(0,${innerHeight})`)
-    .call(xAxis);
+  yScale = d3.scaleLinear().domain(d3.extent(combinedData, d => d[key])).nice().range([innerHeight, 0]);
 
-  g.append("g")
-    .call(yAxis);
+  g.append("g").attr("transform", `translate(0,${innerHeight})`).call(d3.axisBottom(xScale));
+  g.append("g").call(d3.axisLeft(yScale));
 
-  // Line generator
   const line = d3.line()
-    .x(d => xScale(d.time))
-    .y(d => yScale(d[valueKey]))
-    .curve(d3.curveMonotoneX);
+      .x(d => xScale(d.time))
+      .y(d => yScale(d[key]))
+      .curve(d3.curveMonotoneX);
 
-  // Append the line path with a smooth transition
-  const path = g.append("path")
-    .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", strokeColor)
-    .attr("stroke-width", 2)
-    .attr("d", line);
+  // Draw primary dataset
+  g.append("path").datum(primaryData)
+      .attr("fill", "none").attr("stroke", color)
+      .attr("stroke-width", 2).attr("d", line);
 
-  // Animate line drawing
-  const totalLength = path.node().getTotalLength();
-  path
-    .attr("stroke-dasharray", totalLength + " " + totalLength)
-    .attr("stroke-dashoffset", totalLength)
-    .transition()
-    .duration(1000)
-    .ease(d3.easeLinear)
-    .attr("stroke-dashoffset", 0);
+  g.append("text").attr("x", innerWidth / 2).attr("y", -20)
+      .attr("text-anchor", "middle").style("font-size", "16px").text(title);
 
-  // Add brushing
-  const brush = d3.brushX()
-    .extent([[0, 0], [innerWidth, innerHeight]])
-    .on("end", ({ selection }) => {
-      if (!selection) return;
-      const [x0, x1] = selection.map(xScale.invert);
-      xScale.domain([x0, x1]);
-      g.select(".x-axis").transition().duration(750).call(xAxis);
-      g.select(".y-axis").transition().duration(750).call(yAxis);
-      path.transition().duration(750).attr("d", line);
-    });
+  // Draw comparison dataset only if selected
+  if (comparisonData && comparisonData.length > 0) {
+      g.append("path").datum(comparisonData)
+          .attr("fill", "none").attr("stroke", "orange")
+          .attr("stroke-width", 2).attr("stroke-dasharray", "4 4")
+          .attr("d", line);
+  }
 
-  g.append("g").attr("class", "brush").call(brush);
+  // **Add X-Axis Label (Changes Based on Comparison)**
+  g.append("text")
+      .attr("x", innerWidth / 2)
+      .attr("y", innerHeight + 40) // Position below the x-axis
+      .attr("text-anchor", "middle")
+      .style("font-size", "14px")
+      .text(xAxisLabel);
 
-  // Tooltip interactions
-  const focusCircle = g.append("circle")
-    .attr("r", 5)
-    .style("fill", strokeColor)
-    .style("opacity", 0);
-
-  svg.on("mousemove", function (event) {
-    const [mouseX] = d3.pointer(event);
-    const closestPoint = data.reduce((a, b) =>
-      Math.abs(a.time - xScale.invert(mouseX)) < Math.abs(b.time - xScale.invert(mouseX)) ? a : b);
-
-    tooltip.style("opacity", 1)
-      .html(`Time: ${closestPoint.time}s<br>${valueKey.toUpperCase()}: ${closestPoint[valueKey]}`)
-      .style("left", `${event.pageX + 10}px`)
-      .style("top", `${event.pageY - 10}px`);
-
-    focusCircle
-      .attr("cx", xScale(closestPoint.time))
-      .attr("cy", yScale(closestPoint[valueKey]))
-      .style("opacity", 1);
-  }).on("mouseleave", () => {
-    tooltip.style("opacity", 0);
-    focusCircle.style("opacity", 0);
-  });
+  // **Add Y-Axis Label**
+  g.append("text")
+      .attr("transform", "rotate(-90)") // Rotate for Y-axis
+      .attr("x", -innerHeight / 2)
+      .attr("y", -50) // Adjust spacing from axis
+      .attr("text-anchor", "middle")
+      .style("font-size", "14px")
+      .text(key === "eda" ? "Microsiemens (μS)" : "Beats per Minute (BPM)");
 }
+
+
