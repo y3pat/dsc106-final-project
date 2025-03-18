@@ -123,33 +123,34 @@ function normalizeTime(data) {
 // Function to draw graphs with a properly placed legend
 function drawComparisonChart(svgSelector, primaryData, comparisonData, title, key, color, comparisonTest) {
   const svg = d3.select(svgSelector);
-  svg.selectAll("*").remove();
+  svg.selectAll("*").remove(); // Clear previous graph
 
-  const width = +svg.attr("width"),
-        height = +svg.attr("height");
-
-  const margin = { top: 40, right: 50, bottom: 60, left: 70 }; // Increased left margin for Y-labels
+  const width = +svg.attr("width"), height = +svg.attr("height");
+  const margin = { top: 80, right: 50, bottom: 80, left: 70 }; // Adjusted bottom margin for axis labels
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
   if (!primaryData.length) {
-      g.append("text").attr("x", innerWidth / 2).attr("y", innerHeight / 2)
-          .attr("text-anchor", "middle").text("No data for this test.");
-      return;
+    g.append("text")
+      .attr("x", innerWidth / 2)
+      .attr("y", innerHeight / 2)
+      .attr("text-anchor", "middle")
+      .text("No data for this test.");
+    return;
   }
 
   let xScale, yScale;
+  let xAxisLabel = "Time (Seconds)";
 
-  let xAxisLabel = "Time (Seconds)"; // Default label
   if (comparisonTest) {
-      primaryData = normalizeTime(primaryData);
-      comparisonData = normalizeTime(comparisonData);
-      xScale = d3.scaleLinear().domain([0, 100]).range([0, innerWidth]);
-      xAxisLabel = "Normalized Time"; // Change label when comparing tests
+    primaryData = normalizeTime(primaryData);
+    comparisonData = normalizeTime(comparisonData);
+    xScale = d3.scaleLinear().domain([0, 100]).range([0, innerWidth]);
+    xAxisLabel = "Normalized Time";
   } else {
-      xScale = d3.scaleLinear().domain(d3.extent(primaryData, d => d.time)).range([0, innerWidth]);
+    xScale = d3.scaleLinear().domain(d3.extent(primaryData, d => d.time)).range([0, innerWidth]);
   }
 
   const combinedData = [...primaryData, ...(comparisonData || [])];
@@ -157,45 +158,112 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
   yScale = d3.scaleLinear().domain(d3.extent(combinedData, d => d[key])).nice().range([innerHeight, 0]);
 
   g.append("g").attr("transform", `translate(0,${innerHeight})`).call(d3.axisBottom(xScale));
+
   g.append("g").call(d3.axisLeft(yScale));
 
+  // **🔹 RE-ADD AXIS LABELS 🔹**
+  g.append("text")
+    .attr("x", innerWidth / 2)
+    .attr("y", innerHeight + 50) // Positioned below X-axis
+    .attr("text-anchor", "middle")
+    .style("font-size", "14px")
+    .text(xAxisLabel);
+
+  g.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -innerHeight / 2)
+    .attr("y", -50) // Positioned to the left of Y-axis
+    .attr("text-anchor", "middle")
+    .style("font-size", "14px")
+    .text(key === "eda" ? "Microsiemens (μS)" : "Beats per Minute (BPM)");
+
+  // **📈 DRAW DATA LINES**
   const line = d3.line()
-      .x(d => xScale(d.time))
-      .y(d => yScale(d[key]))
-      .curve(d3.curveMonotoneX);
+    .x(d => xScale(d.time))
+    .y(d => yScale(d[key]))
+    .curve(d3.curveMonotoneX);
 
-  // Draw primary dataset
   g.append("path").datum(primaryData)
-      .attr("fill", "none").attr("stroke", color)
-      .attr("stroke-width", 2).attr("d", line);
+    .attr("fill", "none").attr("stroke", color)
+    .attr("stroke-width", 2).attr("d", line);
 
-  g.append("text").attr("x", innerWidth / 2).attr("y", -20)
-      .attr("text-anchor", "middle").style("font-size", "16px").text(title);
+  g.append("text").attr("x", innerWidth / 2).attr("y", -50) // Title Position
+    .attr("text-anchor", "middle").style("font-size", "16px").text(title);
 
-  // Draw comparison dataset only if selected
+  // **🔸 DRAW COMPARISON LINE IF SELECTED**
   if (comparisonData && comparisonData.length > 0) {
-      g.append("path").datum(comparisonData)
-          .attr("fill", "none").attr("stroke", "orange")
-          .attr("stroke-width", 2).attr("stroke-dasharray", "4 4")
-          .attr("d", line);
+    g.append("path").datum(comparisonData)
+      .attr("fill", "none").attr("stroke", "orange")
+      .attr("stroke-width", 2).attr("stroke-dasharray", "4 4")
+      .attr("d", line);
   }
 
-  // **Add X-Axis Label (Changes Based on Comparison)**
-  g.append("text")
-      .attr("x", innerWidth / 2)
-      .attr("y", innerHeight + 40) // Position below the x-axis
-      .attr("text-anchor", "middle")
-      .style("font-size", "14px")
-      .text(xAxisLabel);
+  // **🔥 ADD HOVER EFFECT 🔥**
+  const hoverLine = g.append("line")
+    .attr("stroke", "gray")
+    .attr("stroke-dasharray", "5,5")
+    .attr("y1", 0)
+    .attr("y2", innerHeight)
+    .style("opacity", 0);
 
-  // **Add Y-Axis Label**
-  g.append("text")
-      .attr("transform", "rotate(-90)") // Rotate for Y-axis
-      .attr("x", -innerHeight / 2)
-      .attr("y", -50) // Adjust spacing from axis
-      .attr("text-anchor", "middle")
-      .style("font-size", "14px")
-      .text(key === "eda" ? "Microsiemens (μS)" : "Beats per Minute (BPM)");
+  const tooltipContainer = d3.select("body").append("div")
+    .attr("class", "tooltip-container")
+    .style("position", "absolute")
+    .style("display", "flex")
+    .style("gap", "10px")
+    .style("opacity", 0);
+
+  const primaryTooltip = tooltipContainer.append("div").attr("class", "tooltip-box primary-tooltip");
+  const comparisonTooltip = tooltipContainer.append("div").attr("class", "tooltip-box comparison-tooltip");
+
+  g.append("rect")
+    .attr("width", innerWidth)
+    .attr("height", innerHeight)
+    .attr("fill", "transparent")
+    .on("mousemove", function (event) {
+      const mouseX = d3.pointer(event)[0];
+      const timeValue = xScale.invert(mouseX);
+
+      const closestPrimary = findClosestDataPoint(primaryData, timeValue);
+      const closestComparison = comparisonTest ? findClosestDataPoint(comparisonData, timeValue) : null;
+
+      hoverLine.attr("x1", mouseX).attr("x2", mouseX).style("opacity", 1);
+
+      let primaryText = `Selected: ${closestPrimary[key].toFixed(2)}`;
+      let comparisonText = "";
+
+      if (closestComparison) {
+        const percentDiff = ((closestComparison[key] - closestPrimary[key]) / closestPrimary[key]) * 100;
+        comparisonText = `Comparison: ${closestComparison[key].toFixed(2)} (${percentDiff.toFixed(1)}%)`;
+      }
+
+      primaryTooltip.text(primaryText);
+      if (closestComparison) {
+        comparisonTooltip.style("opacity", 1).text(comparisonText);
+      } else {
+        comparisonTooltip.style("opacity", 0);
+      }
+
+      // **✅ FIXED: Tooltip Background Matches Graph Line Color**
+      const primaryBgColor = key === "eda" ? "red" : "steelblue"; // EDA -> Red, HR -> Blue
+      primaryTooltip.style("background-color", primaryBgColor);
+
+      tooltipContainer
+        .style("left", `${event.pageX + 10}px`)
+        .style("top", `${event.pageY - 60}px`)
+        .style("opacity", 1);
+    })
+    .on("mouseleave", function () {
+      hoverLine.style("opacity", 0);
+      tooltipContainer.style("opacity", 0);
+    });
+}
+
+
+
+// **🔍 Find the closest data point to hovered time**
+function findClosestDataPoint(data, targetTime) {
+  return data.reduce((a, b) => Math.abs(a.time - targetTime) < Math.abs(b.time - targetTime) ? a : b);
 }
 
 

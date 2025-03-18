@@ -113,22 +113,46 @@ header {
   transition: opacity 0.3s ease;
 }
 
-/* Introduction & Conclusion Styling */
 .intro-step, .conclusion-step {
   text-align: center;
-  padding: 100px 20px;
+  padding: 150px 40px; 
   font-size: 1.5rem;
-  background: rgba(0, 0, 0, 0.05); /* Light background */
-  border-radius: 10px;
-  margin-bottom: 200px;
+  margin-bottom: 250px; 
   font-weight: 600;
   letter-spacing: 0.5px;
+  padding-left: 35px;
+  padding-bottom: 300px;
 }
 
-/* Make them more engaging when active */
 .intro-step.is-active, .conclusion-step.is-active {
   color: #A6055D;
   font-weight: bold;
   border-left: 6px solid #A6055D;
-  padding-left: 25px;
+}
+
+.tooltip-container {
+  display: flex;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+.tooltip-box {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.primary-tooltip {
+  background-color: red;
+  color: white;
+}
+
+.comparison-tooltip {
+  background-color: orange;
+  color: white;
 }
