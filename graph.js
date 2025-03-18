@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 window.updateGraphsForTest = function(testName, comparisonTest = "") {
   window.currentTest = testName;
 
-  // ✅ Reset dropdown when scrolling to a new step
+  // Reset dropdown when scrolling to a new step
   if (window.currentComparison !== comparisonTest) {
       document.getElementById("compare-select").value = ""; // Set dropdown to "None"
       window.currentComparison = "";
@@ -65,7 +65,7 @@ function updateDropdownOptions(selectedTest) {
       }
   });
 
-  // ✅ Ensure the dropdown retains the selected value
+  // Ensure the dropdown retains the selected value
   dropdown.value = window.currentComparison || "";
 }
 
@@ -115,7 +115,7 @@ function normalizeTime(data) {
   const maxTime = d3.max(data, d => d.time);
 
   return data.map(d => ({
-      time: (d.time - minTime) / (maxTime - minTime) * 100, // Scale time between 0-100
+      time: (d.time - minTime) / (maxTime - minTime) * 100, 
       eda: d.eda,
       hr: d.hr
   }));
@@ -160,12 +160,12 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
 
   g.append("g").attr("transform", `translate(0,${innerHeight})`).call(d3.axisBottom(xScale));
 
-  // ✅ Modify Y-axis ticks to show every other tick
+  // Modify Y-axis ticks to show every other tick
   g.append("g").call(d3.axisLeft(yScale)
     .tickValues(yScale.ticks().filter((d, i) => i % 2 === 0)) 
   );
 
-  // **🔹 RE-ADD AXIS LABELS 🔹**
+  // **RE-ADD AXIS LABELS**
   g.append("text")
     .attr("x", innerWidth / 2)
     .attr("y", innerHeight + 50)
@@ -181,7 +181,7 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
     .style("font-size", "14px")
     .text(key === "eda" ? "Microsiemens (μS)" : "Beats per Minute (BPM)");
 
-  // **📈 DRAW DATA LINES WITH ANIMATION**
+  // **DRAW DATA LINES WITH ANIMATION**
   const line = d3.line()
     .x(d => xScale(d.time))
     .y(d => yScale(d[key]))
@@ -194,7 +194,7 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
     .attr("stroke-width", 2)
     .attr("d", line);
 
-  // ✅ Animate line drawing
+  // Animate line drawing
   const totalLength = path.node().getTotalLength();
   path.attr("stroke-dasharray", totalLength + " " + totalLength)
     .attr("stroke-dashoffset", totalLength)
@@ -210,7 +210,7 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
     .style("font-size", "16px")
     .text(title);
 
-  // **🔸 DRAW COMPARISON LINE IF SELECTED**
+  // **DRAW COMPARISON LINE IF SELECTED**
   if (comparisonData && comparisonData.length > 0) {
     const comparisonPath = g.append("path")
       .datum(comparisonData)
@@ -229,7 +229,7 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
       .attr("stroke-dashoffset", 0);
   }
 
-  // **🔥 ADD HOVER EFFECT 🔥**
+  // **ADD HOVER EFFECT **
   const hoverLine = g.append("line")
     .attr("stroke", "gray")
     .attr("stroke-dasharray", "5,5")
@@ -295,7 +295,7 @@ function drawComparisonChart(svgSelector, primaryData, comparisonData, title, ke
 
 
 
-// **🔍 Find the closest data point to hovered time**
+// **Find the closest data point to hovered time**
 function findClosestDataPoint(data, targetTime) {
   return data.reduce((a, b) => Math.abs(a.time - targetTime) < Math.abs(b.time - targetTime) ? a : b);
 }

@@ -1,11 +1,11 @@
 const scroller = scrollama();
-const leftColumn = document.querySelector(".left-column"); // Scrollable section
-const graphContainer = document.querySelector("#graph-container"); // Graph container
-const animationContainer = document.querySelector("#animation-container"); // Animation container
-const stroopGameContainer = document.querySelector("#stroop-game-container"); // Stroop Game container
+const leftColumn = document.querySelector(".left-column");
+const graphContainer = document.querySelector("#graph-container"); 
+const animationContainer = document.querySelector("#animation-container"); 
+const stroopGameContainer = document.querySelector("#stroop-game-container"); 
 
 function handleStepEnter(response) {
-  console.log("Entering step:", response.element.getAttribute("data-test")); // Debugging log
+  console.log("Entering step:", response.element.getAttribute("data-test")); 
 
   // Remove active class from all steps
   d3.selectAll(".step").classed("is-active", false);
@@ -21,7 +21,7 @@ function handleStepEnter(response) {
     stroopGameContainer.style.display = "none";
     
     if (typeof startAnimation === "function") {
-      startAnimation("introduction"); // Trigger animation if applicable
+      startAnimation("introduction");
     }
     return;
   } else {
@@ -32,7 +32,7 @@ function handleStepEnter(response) {
     console.log("Displaying Stroop Test Game for conclusion");
     graphContainer.style.display = "none";
     stroopGameContainer.style.display = "block";
-    startStroopGame(); // Start the Stroop Test Game
+    startStroopGame(); 
     return;
   } else {
     stroopGameContainer.style.display = "none";
@@ -78,7 +78,7 @@ function waitForDataAndStart() {
       document.querySelector(".step:first-child").classList.add("is-active");
       clearInterval(checkDataLoaded);
 
-      // ✅ Now that data is ready, initialize Scrollama
+      // Now that data is ready, initialize Scrollama
       initScrollama();
     }
   }, 100);
@@ -89,11 +89,11 @@ function initScrollama() {
   scroller
     .setup({
       step: ".step",
-      offset: 0.50, // Middle of the screen remains the trigger zone
+      offset: 0.50, 
       debug: false
     })
     .onStepEnter(handleStepEnter);
 }
 
-// ✅ Start waiting for data, then initialize everything
+// Start waiting for data, then initialize everything
 waitForDataAndStart();
